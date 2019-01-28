@@ -17,8 +17,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    double nlat = 0, nlon = 0;
-    String[] test = new String[2];
+    String nlat = "0", nlon = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +38,17 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
     }
     //ボタンが押された時の処理
     public void onClick(View view){
-        Intent intent = new Intent(this, ListActivity.class);
-        startActivity(intent);//画面遷移
-
-        List<String> list = Arrays.asList(test);
+        //インテントの作成
+        Intent intent1 = new Intent(this, ListActivity.class);
 
         //ここに遷移するための処理
-        //インテントの作成
-        intent.putStringArrayListExtra("latlon", (ArrayList<String>)list);
+        intent1.putExtra("lat", nlat);
+        intent1.putExtra("lon", nlon);
+
+        startActivity(intent1);//画面遷移
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
@@ -73,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLocationChanged(Location location) {
-            test[0] = String.valueOf(location.getLatitude());
-            test[1] = String.valueOf(location.getLongitude());
+            nlat = String.valueOf(location.getLatitude());
+            nlon = String.valueOf(location.getLongitude());
         }
 
         @Override
