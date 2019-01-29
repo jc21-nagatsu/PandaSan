@@ -3,6 +3,8 @@ package com.websarva.wings.android.refuge_db;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,17 +13,19 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+
 public class MainActivity extends AppCompatActivity {
 
-    String nlat = "0", nlon = "0";
+    String lat = "0",lon = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);setContentView(R.layout.activity_main);
+        insert();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         GPSLocationListener locationListener = new GPSLocationListener();
-        if (ActivityCompat.checkSelfPermission(MainActivity.this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
             String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
             ActivityCompat.requestPermissions(MainActivity.this, permissions,1000);
             // TODO: Consider calling
@@ -35,17 +39,30 @@ public class MainActivity extends AppCompatActivity {
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
     }
+
     //ボタンが押された時の処理
     public void onClick(View view){
         //インテントの作成
         Intent intent1 = new Intent(this, ListActivity.class);
-
         //ここに遷移するための処理
-        intent1.putExtra("lat", nlat);
-        intent1.putExtra("lon", nlon);
+        intent1.putExtra("lat",lat);
+        intent1.putExtra("lon",lon);
 
         startActivity(intent1);//画面遷移
     }
+    public void insert(){
+        DB_shelter shelter = new DB_shelter();
+        TestOpenHelper helper = new TestOpenHelper(MainActivity.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        try{
+            String sql = "INSERT OR REPLACE INTO shelter(shel_no,shel_name,latitube,longitube) VALUES" +shelter.getshelter();;
+            SQLiteStatement stmt = db.compileStatement(sql);
+            stmt.executeInsert();
+        }finally {
+            db.close();
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         //ACCESS_FINE_LOCATIONに対するパーミッションダイアログでかつ許可を選択したなら…
@@ -63,12 +80,12 @@ public class MainActivity extends AppCompatActivity {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
     }
-    private class GPSLocationListener implements LocationListener {
 
+    private class GPSLocationListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-            nlat = String.valueOf(location.getLatitude());
-            nlon = String.valueOf(location.getLongitude());
+            lat = String.valueOf(location.getLatitude());
+            lon = String.valueOf(location.getLongitude());
         }
 
         @Override
@@ -86,4 +103,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
 }
