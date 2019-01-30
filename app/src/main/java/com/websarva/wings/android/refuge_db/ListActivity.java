@@ -20,8 +20,8 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
     //現在地
     double nlat = 0, nlon = 0;
     //東北電子
-    //private double nlat = 38.2645516, nlon = 140.8795554;
-
+    //double nlat = 38.2645516, nlon = 140.8795554;
+    
     private static String[] scenes;
 
     @Override
@@ -40,31 +40,31 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
             Cursor cursor = db.rawQuery("SELECT * FROM shelter",null);
-            int i = cursor.getCount();
+            int count = cursor.getCount();
             scenes = new String[5];
-            String[][] shelter = new String[i][2];
-            String[] stac = new String[i];
-            int note = 0;
+            String[][] shelter = new String[count][2];
+            String[] distance = new String[count];
+            int i = 0;
             while (cursor.moveToNext()) {
                 int idx = cursor.getColumnIndex("shel_name");
                 double lat = cursor.getDouble(cursor.getColumnIndex("latitube"));
                 double lon = cursor.getDouble(cursor.getColumnIndex("longitube"));
 
-                double s = keisan(lat, lon, nlat, nlon);
+                double stac = keisan(lat, lon, nlat, nlon);
 
-                shelter[note][0] = cursor.getString(idx);
-                shelter[note][1] = String.valueOf(s);
-                stac[note] = String.valueOf(s);
+                shelter[i][0] = cursor.getString(idx);
+                shelter[i][1] = String.valueOf(stac);
+                distance[i] = String.valueOf(stac);
 
-                note++;
+                i++;
             }
 
-            Arrays.sort(stac);
+            Arrays.sort(distance);
 
             for (int l = 0; l < 5; l++) {
-                for (int l2 = 0; l2 < i; l2++) {
-                    if (shelter[l2][1].equals(stac[l])) {
-                        scenes[l] = shelter[l2][0];
+                for (int k = 0; k < count; k++) {
+                    if (shelter[k][1].equals(distance[l])) {
+                        scenes[l] = shelter[k][0];
                         break;
                     }
                 }
