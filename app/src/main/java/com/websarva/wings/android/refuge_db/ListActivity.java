@@ -17,12 +17,13 @@ import java.util.Locale;
 
 public class ListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    //現在地
-    double nlat = 0, nlon = 0;
+    //現在位置の緯度と経度
+    private double lat = 0, lon = 0;
     //東北電子
-    //private double nlat = 38.2645516, nlon = 140.8795554;
+    //private double lat = 38.2645516, lon = 140.8795554;
 
-    private static String[] scenes;
+    //リストに表示する
+    private static String[] scenes = new String[5];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,39 +33,48 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
 
         ListView listView = findViewById(R.id.list_view);
 
+        //MainActivityから現在位置の緯度と経度を受け取る
         Intent intent = getIntent();
-        nlat = Double.parseDouble(intent.getStringExtra("lat"));
-        nlon = Double.parseDouble(intent.getStringExtra("lon"));
+        lat = Double.parseDouble(intent.getStringExtra("lat"));
+        lon = Double.parseDouble(intent.getStringExtra("lon"));
 
+        //データベースに接続
         TestOpenHelper helper = new TestOpenHelper(ListActivity.this);
         SQLiteDatabase db = helper.getWritableDatabase();
         try {
+            //SQL実行
             Cursor cursor = db.rawQuery("SELECT * FROM shelter",null);
-            int i = cursor.getCount();
-            scenes = new String[5];
-            String[][] shelter = new String[i][2];
-            String[] stac = new String[i];
-            int note = 0;
+            //取り出した行数
+            int count = cursor.getCount();
+            //受け取り用の変数
+            String[][] shelter = new String[count][2];
+            String[] distanceList = new String[count];
+
+            int i = 0;
+
             while (cursor.moveToNext()) {
                 int idx = cursor.getColumnIndex("shel_name");
-                double lat = cursor.getDouble(cursor.getColumnIndex("latitube"));
-                double lon = cursor.getDouble(cursor.getColumnIndex("longitube"));
+                double slat = cursor.getDouble(cursor.getColumnIndex("latitube"));
+                double slon = cursor.getDouble(cursor.getColumnIndex("longitube"));
 
-                double s = keisan(lat, lon, nlat, nlon);
+                //現在位置の緯度経度と避難所の緯度経度から、現在位置から避難所までの直線距離を計算
+                double distance = Math.sqrt(Math.pow(slat - lat, 2) + Math.pow(slon - lon, 2));
 
-                shelter[note][0] = cursor.getString(idx);
-                shelter[note][1] = String.valueOf(s);
-                stac[note] = String.valueOf(s);
+                shelter[i][0] = cursor.getString(idx);
+                shelter[i][1] = String.valueOf(distance);
+                distanceList[i] = String.valueOf(distance);
 
-                note++;
+                i++;
             }
 
-            Arrays.sort(stac);
+            //距離の近い順に並び変え
+            Arrays.sort(distanceList);
 
+            //並び変えたdistanceListを用いてshelterから5つ取り出す
             for (int l = 0; l < 5; l++) {
-                for (int l2 = 0; l2 < i; l2++) {
-                    if (shelter[l2][1].equals(stac[l])) {
-                        scenes[l] = shelter[l2][0];
+                for (int k = 0; k < count; k++) {
+                    if (shelter[k][1].equals(distanceList[l])) {
+                        scenes[l] = shelter[k][0];
                         break;
                     }
                 }
@@ -80,10 +90,6 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
 
         listView.setOnItemClickListener(this);
 
-    }
-
-    private double keisan(double $lat1, double $lon1, double $lat2, double $lon2) {
-        return Math.sqrt(Math.pow($lat1 - $lat2, 2) + Math.pow($lon1 - $lon2, 2));
     }
 
     @Override
