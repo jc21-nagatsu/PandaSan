@@ -24,7 +24,7 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
 
     //リストに表示する
     private static String[] scenes = new String[5];
-
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
