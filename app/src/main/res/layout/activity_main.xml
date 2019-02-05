@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="6dp"
+        android:text="※避難する前に確認してください"
+        android:textColor="@color/colorAccent"
+        android:textSize="23dp" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:layout_width="wrap_content"
@@ -14,6 +23,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="40dp"
         android:text="ガスの栓を締めた"
+        android:textSize="18sp"
         tools:layout_editor_absoluteX="34dp"
         tools:layout_editor_absoluteY="16dp" />
 
@@ -24,6 +34,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="80dp"
         android:text="ブレーカーを落とした"
+        android:textSize="18sp"
         tools:layout_editor_absoluteX="34dp"
         tools:layout_editor_absoluteY="48dp" />
 
@@ -34,6 +45,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="120dp"
         android:text="貴重品の確認"
+        android:textSize="18sp"
         tools:layout_editor_absoluteX="34dp"
         tools:layout_editor_absoluteY="80dp" />
 
@@ -43,7 +55,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="109dp"
-        android:text="現在地から近い避難所を検索します" />
+        android:text="現在地から近い避難所を検索します"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/button"
